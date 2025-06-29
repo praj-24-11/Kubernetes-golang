@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "go-upload.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "go-upload.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "go-upload.name" . }}
+    spec:
+      containers:
+        - name: go-upload
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: upload-storage
+              mountPath: /data/uploads
+      volumes:
+        - name: upload-storage
+          persistentVolumeClaim:
+            claimName: {{ include "go-upload.fullname" . }}
