@@ -1,0 +1,33 @@
+replicaCount: 3
+image:
+  repository: <your-docker-id>/langchain-mcp-app
+  tag: latest
+  pullPolicy: IfNotPresent
+service:
+  type: ClusterIP
+  port: 8080
+ingress:
+  enabled: true
+  host: langchain-mcp.example.com
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  tls:
+    - hosts:
+        - langchain-mcp.example.com
+      secretName: langchain-tls
+resources:
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+  requests:
+    cpu: "200m"
+    memory: "256Mi"
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+config:
+  openaiApiKey: "your-openai-api-key"
+  mcpServerUrl: "http://mcp-server.default.svc.cluster.local"

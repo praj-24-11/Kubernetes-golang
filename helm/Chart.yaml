@@ -1,0 +1,9 @@
+apiVersion: v2
+name: langchain-mcp
+description: A Helm chart for deploying LangChain with MCP for change management
+version: 0.1.0
+appVersion: "1.0"
+dependencies:
+  - name: nginx-ingress
+    version: "4.7.0"
+    repository: "https://kubernetes.github.io/ingress-nginx"

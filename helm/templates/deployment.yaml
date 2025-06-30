@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-langchain
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-langchain
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-langchain
+    spec:
+      containers:
+        - name: langchain
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          env:
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: langchain-secrets
+                  key: openai-api-key
+            - name: MCP_SERVER_URL
+              value: {{ .Values.config.mcpServerUrl }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
